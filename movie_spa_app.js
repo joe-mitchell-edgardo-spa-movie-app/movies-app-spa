@@ -30,3 +30,5 @@ $("#add-movie-btn").click(function(event) {
     event.preventDefault();
     $("#add-modal").modal("show");
 });
+
+//movies
