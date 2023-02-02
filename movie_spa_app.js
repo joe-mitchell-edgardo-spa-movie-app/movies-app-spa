@@ -3,6 +3,10 @@
 
 $(document).ready(function(){
     // loadModal.toggle();
+    generateMovieList();
+});
+
+function generateMovieList() {
     $.get("https://cord-flannel-print.glitch.me/movies").done(function(data) {
         console.log(data);
         data.forEach((movie) => console.log(movie));
@@ -23,7 +27,7 @@ $(document).ready(function(){
             )
         });
     });
-});
+}
 
 
 $("#add-movie-btn").click(function(event) {
