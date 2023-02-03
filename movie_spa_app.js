@@ -83,7 +83,7 @@ const createMovieCards = (data) => {
 function createStars(rating) {
     let stars = "";
     for (let i = 0; i < rating; i++) {
-        stars += `X`;
+        stars += `<i class="fa-regular fa-star"></i>`;
     }
     return stars;
 }
