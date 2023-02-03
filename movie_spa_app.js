@@ -1,10 +1,11 @@
+
 "use strict";
 
 $(document).ready(function(){
     createAddEventListener();
     createAddModalSubmitButtonEventListener();
-    createEditModalConfirmButtonEventListener();
     getAllMovieData();
+    $("#add-movie-btn").removeClass("disabled");
 });
 
 function createAddEventListener() {
@@ -54,14 +55,6 @@ function clearAddMovieInputs() {
     $("#release-input").val("");
 }
 
-function createEditModalConfirmButtonEventListener() {
-    $("#confirm-edit-btn").click(confirmEdit);
-}
-
-function confirmEdit() {
-    console.log("HI MOM");
-}
-
 function getAllMovieData() {
     $.get("https://cord-flannel-print.glitch.me/movies").done(createMovieCards);
 }
@@ -74,7 +67,7 @@ const createMovieCards = (data) => {
                     <div class="card-body">
                         <h5 class="card-title">${data[i].title}</h5>
                         <p class="card-text">Director: ${data[i].director}</p>
-                        <p class="card-text">${data[i].rating}</p>
+                        <p class="card-text">${createStars(data[i].rating)}</p>
                         <p class="card-text">${data[i].genre}</p>
                         <p class="card-text">${data[i].release}</p>
                         <div class="d-flex">
@@ -87,30 +80,76 @@ const createMovieCards = (data) => {
         appendMovieCards(html);
 }
 
+function createStars(rating) {
+    let stars = "";
+    for (let i = 0; i < rating; i++) {
+        stars += `<i class="fa-regular fa-star"></i>`;
+    }
+    return stars;
+}
+
 function appendMovieCards(html) {
     $("#movie-list").html(html);
     createEditClickEventListener();
     createDeleteEventListener();
 }
 
+let count = 0;
+
 function createEditClickEventListener() {
     $(".edit-btn").click(event => {
+        count = 0;
         let thisMovieId = event.target.getAttribute("data-id");
-        getMovieByIdForAdding(thisMovieId);
+        getMovieByIdForEditing(thisMovieId);
     });
 }
 
-function getMovieByIdForAdding(id) {
+function getMovieByIdForEditing(id) {
     $.get(`https://cord-flannel-print.glitch.me/movies/${id}`).done(setMovieData);
 }
 
 const setMovieData = (data) => {
-    $("#edit-movie-title-input").attr('value', data.title);
-    $("#edit-director-input").attr('value', data.director);
-    $("#edit-rating-input").children().first().text(data.rating);
-    $("#edit-genre-input").children().first().text(data.genre);
-    $("#edit-release-input").attr('value', data.release);
+    $("#edit-movie-title-input").val(data.title);
+    $("#edit-director-input").val(data.director);
+    $("#edit-rating-input").val(data.rating);
+    $("#edit-genre-input").val(data.genre);
+    $("#edit-release-input").val(data.release);
     $("#edit-modal").modal("show");
+    createEditModalConfirmButtonEventListener(data);
+}
+
+function createEditModalConfirmButtonEventListener(data) {
+    let passingData = data;
+    $("#confirm-edit-btn").click(function() {
+        if (count === 0) {
+            editMovieData(passingData);
+        }
+    });
+}
+
+function editMovieData(data) {
+    $("#confirm-edit-btn").off();
+    count++;
+    let movieObjTwo = {
+        title: $("#edit-movie-title-input").val(),
+        director: $("#edit-director-input").val(),
+        rating: $("#edit-rating-input").val(),
+        genre: $("#edit-genre-input").val(),
+        release: $("#edit-release-input").val()
+    };
+    const url = `https://cord-flannel-print.glitch.me/movies/${data.id}`
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(movieObjTwo)
+    };
+    fetch(url, options)
+        .then(function () {
+        getAllMovieData();
+            $("#edit-modal").modal("hide");
+    });
 }
 
 function createDeleteEventListener() {
@@ -130,3 +169,55 @@ function deleteMovie(id) {
         getAllMovieData();
     });
 }
+
+function getMoviesArray() {
+    return $.get("https://cord-flannel-print.glitch.me/movies")
+        .done(function(data) {
+            return data;
+    });
+}
+
+$("#sort-by-select").change(checkSortByValue);
+
+function checkSortByValue() {
+    if ($("#sort-by-select").val() === "Default") {
+        getAllMovieData();
+    }
+    else if ($("#sort-by-select").val() === "Title (A-Z)") {
+        sortByTitleAToZ();
+    } else if ($("#sort-by-select").val() === "Title (Z-A)") {
+        sortByTitlZToA();
+    } else if ($("#sort-by-select").val() === "Rating (High to Low)") {
+        sortByRatingHighToLow();
+    } else if ($("#sort-by-select").val() === "Rating (Low to High)") {
+        sortByRatingLowToHigh();
+    } else {
+        console.log("WENT HERE INSTEAD");
+    }
+}
+
+async function sortByTitleAToZ() {
+    let moviesArray = await getMoviesArray();
+    moviesArray.sort((a, b) => (a.title > b.title) ? 1 : -1);
+    createMovieCards(moviesArray);
+}
+
+async function sortByTitlZToA() {
+    let moviesArray = await getMoviesArray();
+    moviesArray.sort((a, b) => (a.title < b.title) ? 1 : -1);
+    createMovieCards(moviesArray);
+}
+
+async function sortByRatingHighToLow() {
+    let moviesArray = await getMoviesArray();
+    moviesArray.sort((a, b) => (a.rating < b.rating) ? 1 : -1);
+    createMovieCards(moviesArray);
+}
+
+async function sortByRatingLowToHigh() {
+    let moviesArray = await getMoviesArray();
+    moviesArray.sort((a, b) => (a.rating > b.rating) ? 1 : -1);
+    createMovieCards(moviesArray);
+}
+
+//     coffees.sort((a, b) => (a.id > b.id) ? 1 : -1);
