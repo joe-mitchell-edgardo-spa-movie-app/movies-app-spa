@@ -1,3 +1,4 @@
+
 "use strict";
 
 $(document).ready(function(){
@@ -63,7 +64,6 @@ const createMovieCards = (data) => {
     for (let i = 0; i < data.length; i++) {
         html +=
             `<div class="card border m-1 col-4" style="width: 18rem;" data-id="${data[i].id}">
-<!--                <img src="moviePoster[i]" class="card-img-top" alt="movie-poster">-->
                     <div class="card-body">
                         <h5 class="card-title">${data[i].title}</h5>
                         <p class="card-text">Director: ${data[i].director}</p>
@@ -170,19 +170,54 @@ function deleteMovie(id) {
     });
 }
 
+function getMoviesArray() {
+    return $.get("https://cord-flannel-print.glitch.me/movies")
+        .done(function(data) {
+            return data;
+    });
+}
 
-// function moviePoster(movie) {
-//     console.log(movie);
-//     let title = "";
-//     for (let i = 0; i < movie.title.length; i++) {
-//         if (movie.title.charAt(i) === " ") {
-//             title += movie.title.charAt(i).replace(" ", "+");
-//         } else {
-//             title += movie.title.charAt(i);
-//         }
-//     }
-//     console.log(title);
-//     fetch(`https://www.omdbapi.com/?t=${title}&apikey=c06f85c5`).then(function() {
-//         console.log("success");
-//     });
-// }
+$("#sort-by-select").change(checkSortByValue);
+
+function checkSortByValue() {
+    if ($("#sort-by-select").val() === "Default") {
+        getAllMovieData();
+    }
+    else if ($("#sort-by-select").val() === "Title (A-Z)") {
+        sortByTitleAToZ();
+    } else if ($("#sort-by-select").val() === "Title (Z-A)") {
+        sortByTitlZToA();
+    } else if ($("#sort-by-select").val() === "Rating (High to Low)") {
+        sortByRatingHighToLow();
+    } else if ($("#sort-by-select").val() === "Rating (Low to High)") {
+        sortByRatingLowToHigh();
+    } else {
+        console.log("WENT HERE INSTEAD");
+    }
+}
+
+async function sortByTitleAToZ() {
+    let moviesArray = await getMoviesArray();
+    moviesArray.sort((a, b) => (a.title > b.title) ? 1 : -1);
+    createMovieCards(moviesArray);
+}
+
+async function sortByTitlZToA() {
+    let moviesArray = await getMoviesArray();
+    moviesArray.sort((a, b) => (a.title < b.title) ? 1 : -1);
+    createMovieCards(moviesArray);
+}
+
+async function sortByRatingHighToLow() {
+    let moviesArray = await getMoviesArray();
+    moviesArray.sort((a, b) => (a.rating < b.rating) ? 1 : -1);
+    createMovieCards(moviesArray);
+}
+
+async function sortByRatingLowToHigh() {
+    let moviesArray = await getMoviesArray();
+    moviesArray.sort((a, b) => (a.rating > b.rating) ? 1 : -1);
+    createMovieCards(moviesArray);
+}
+
+//     coffees.sort((a, b) => (a.id > b.id) ? 1 : -1);
