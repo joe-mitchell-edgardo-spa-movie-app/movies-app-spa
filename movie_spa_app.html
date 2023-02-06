@@ -10,6 +10,9 @@
 		.navbar-brand {
 			color: black;
 		}
+		.hidden {
+			display: none;
+		}
 	</style>
 </head>
 <body>
@@ -20,8 +23,31 @@
 		<div class="d-flex">
 			<form class="d-flex">
 				<div class="input-group pe-5">
-					<span class="input-group-text">Search</span>
-					<input id="search-input" type="text" class="form-control" placeholder="Type in search here">
+					<span class="input-group-text">Search by</span>
+					<select class="form-select w-25" id="search-by-select">
+						<option value="Title" selected>Title</option>
+						<option value="Director">Director</option>
+						<option value="Rating">Rating</option>
+						<option value="Genre">Genre</option>
+						<option value="Release">Release</option>
+					</select>
+					<input id="search-input" type="text" class="form-control w-50 hidden" placeholder="Type here">
+					<select class="form-select w-25 hidden" id="rating-select">
+						<option value="Default">Choose...</option>
+						<option value="1" >1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+					<select class="form-select w-25 hidden" id="genre-select">
+						<option value="Default">Choose...</option>
+						<option value="Comedy">Comedy</option>
+						<option value="Horror">Horror</option>
+						<option value="Action">Action</option>
+						<option value="Sci-fi">Sci-fi</option>
+						<option value="Fantasy">Fantasy</option>
+					</select>
 				</div>
 			</form>
 			<form class="d-flex">
