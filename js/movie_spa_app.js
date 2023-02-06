@@ -186,6 +186,7 @@ function getMoviesArray() {
 $("#sort-by-select").change(checkSortByValue);
 
 function checkSortByValue() {
+    clearSearchByInputs();
     if ($("#sort-by-select").val() === "Default") {
         getAllMovieData();
     } else if ($("#sort-by-select").val() === "Title (A-Z)") {
@@ -199,6 +200,17 @@ function checkSortByValue() {
     } else {
         console.log("WENT HERE INSTEAD");
     }
+}
+
+function clearSearchByInputs() {
+    $("#search-input").val("");
+    $("#search-by-select").val("Title");
+    $("#rating-select").val("Default");
+    $("#genre-select").val("Default");
+    $("#search-input").removeClass("hidden");
+    $("#rating-select").addClass("hidden");
+    $("#genre-select").addClass("hidden");
+
 }
 
 async function sortByTitleAToZ() {
@@ -229,10 +241,15 @@ $("#search-input").keydown(sortBySearch);
 $("#rating-select").change(sortBySearch);
 $("#genre-select").change(sortBySearch);
 $("#search-by-select").change(function() {
+    clearSortByInput();
     toggleHiddenClassForRatingSelect();
     makeSearchesDefault();
     getAllMovieData();
 });
+
+function clearSortByInput() {
+    $("#sort-by-select").val("Default");
+}
 
 async function sortBySearch() {
     if ($("#search-input").val() === "" && $("#rating-select").val() === "Default" && $("#genre-select").val() === "Default") {

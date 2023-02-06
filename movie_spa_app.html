@@ -14,25 +14,26 @@
 			display: none;
 		}
 	</style>
+	<link rel="stylesheet" href="css/movie_spa_app.css">
 </head>
 <body>
 
 <nav class="navbar navbar-light bg-light">
 	<div class="container-fluid">
-		<p class="navbar-brand">Movie Stuff</p>
+		<p class="navbar-brand fs-1">Movie Stuff</p>
 		<div class="d-flex">
 			<form class="d-flex">
 				<div class="input-group pe-5">
-					<span class="input-group-text">Search by</span>
-					<select class="form-select w-25" id="search-by-select">
+					<span class="input-group-text showtime rounded-0 border border-0 p-2 border-opacity-10">Search by</span>
+					<select class="form-select w-25 Chalkduster shadow-lg rounded-0 border border-0 p-2 border-opacity-10 border-bottom" id="search-by-select">
 						<option value="Title" selected>Title</option>
 						<option value="Director">Director</option>
 						<option value="Rating">Rating</option>
 						<option value="Genre">Genre</option>
 						<option value="Release">Release</option>
 					</select>
-					<input id="search-input" type="text" class="form-control w-50 hidden" placeholder="Type here">
-					<select class="form-select w-25 hidden" id="rating-select">
+					<input id="search-input" type="text" class="form-control w-50 hidden Chalkduster shadow-lg rounded-0 border border-0 p-2 border-opacity-10 border-bottom" placeholder="Type here">
+					<select class="form-select w-25 hidden Chalkduster shadow-lg rounded-0 border border-0 p-2 border-opacity-10 border-bottom" id="rating-select">
 						<option value="Default">Choose...</option>
 						<option value="1" >1</option>
 						<option value="2">2</option>
@@ -40,7 +41,7 @@
 						<option value="4">4</option>
 						<option value="5">5</option>
 					</select>
-					<select class="form-select w-25 hidden" id="genre-select">
+					<select class="form-select w-25 hidden Chalkduster shadow-lg rounded-0 border border-0 p-2 border-opacity-10 border-bottom" id="genre-select">
 						<option value="Default">Choose...</option>
 						<option value="Comedy">Comedy</option>
 						<option value="Horror">Horror</option>
@@ -52,9 +53,9 @@
 			</form>
 			<form class="d-flex">
 				<div class="input-group pe-3">
-					<label class="input-group-text" for="sort-by-select">Sort by:</label>
-					<select class="form-select" id="sort-by-select">
-						<option selected>Default</option>
+					<label class="showtime rounded-0 border border-0 p-2 border-opacity-10 input-group-text" for="sort-by-select">Sort by:</label>
+					<select class="Chalkduster shadow-lg rounded-0 border border-0 p-2 border-opacity-10 border-bottom form-select" id="sort-by-select">
+						<option value="Default" selected>Default</option>
 						<option value="Rating (High to Low)">Rating (High to Low)</option>
 						<option value="Rating (Low to High)">Rating (Low to High)</option>
 						<option value="Title (A-Z)">Title (A-Z)</option>
@@ -63,7 +64,8 @@
 				</div>
 			</form>
 			<form class="d-flex">
-				<button id="add-movie-btn" class="btn btn-outline-success disabled" type="submit">Add a Movie</button>
+
+				<button id="add-movie-btn" class="shadow border-0 btn btn-success disabled" type="submit">Add a Movie</button>
 			</form>
 		</div>
 	</div>
@@ -121,7 +123,7 @@
 	</div>
 </div>
 
-<div id="movie-list" class="container-fluid d-flex flex-wrap">
+<div id="movie-list" class="container h-100 d-flex justify-content-center py-5 flex-wrap">
 	<div id="spinner" class="spinner-border mt-5 position-relative start-50" role="status">
 		<span class="visually-hidden">Loading...</span>
 	</div>
@@ -177,13 +179,13 @@
 		</div>
 	</div>
 </div>
-
+<script src="https://kit.fontawesome.com/3a49161b32.js" crossorigin="anonymous"></script>
 <script src="https://kit.fontawesome.com/66bf6e2046.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
 		crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
 		crossorigin="anonymous"></script>
-<script src="movie_spa_app.js"></script>
+<script src="js/movie_spa_app.js"></script>
 </body>
 </html>
