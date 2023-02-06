@@ -11,6 +11,7 @@ $(document).ready(function(){
 function createAddEventListener() {
     $("#add-movie-btn").click(function(event) {
         event.preventDefault();
+        clearAddMovieInputs();
         $("#add-modal").modal("show");
     });
 }
@@ -41,10 +42,12 @@ function addMovie(event){
     fetch(url, options)
         .then(function(response) {
             getAllMovieData();
+            checkSearch();
             $("#add-modal").modal("hide");
         }).catch(function(error) {
         alert("post failed")
     });
+    // checkSearch();
 }
 
 function clearAddMovieInputs() {
@@ -57,6 +60,7 @@ function clearAddMovieInputs() {
 
 function getAllMovieData() {
     $.get("https://cord-flannel-print.glitch.me/movies").done(createMovieCards);
+    $("#sort-by-select").val("Default");
 }
 
 const createMovieCards = (data) => {
@@ -148,7 +152,8 @@ function editMovieData(data) {
     fetch(url, options)
         .then(function () {
         getAllMovieData();
-            $("#edit-modal").modal("hide");
+        checkSearch();
+        $("#edit-modal").modal("hide");
     });
 }
 
@@ -159,14 +164,15 @@ function createDeleteEventListener() {
     });
 }
 
-function deleteMovie(id) {
-    fetch(`https://cord-flannel-print.glitch.me/movies/${id}`, {
+async function deleteMovie(id) {
+    return await fetch(`https://cord-flannel-print.glitch.me/movies/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
         }
     }).then(function () {
         getAllMovieData();
+        checkSearch();
     });
 }
 
@@ -220,4 +226,25 @@ async function sortByRatingLowToHigh() {
     createMovieCards(moviesArray);
 }
 
-//     coffees.sort((a, b) => (a.id > b.id) ? 1 : -1);
+$("#search-input").keydown(sortBySearch);
+
+
+async function sortBySearch() {
+    if ($("#search-input").val() === "") {
+        getAllMovieData();
+    }
+    let moviesArray = await getMoviesArray();
+    console.log(moviesArray);
+    const newMoviesArray = moviesArray.filter(movie => {
+            if ( movie.title.toLowerCase().indexOf( $("#search-input").val().toLowerCase() ) > -1 ) {
+                return movie;
+            }
+    });
+    createMovieCards(newMoviesArray);
+}
+
+function checkSearch() {
+    if ($("#search-input").val() !== "") {
+        sortBySearch();
+    }
+}
