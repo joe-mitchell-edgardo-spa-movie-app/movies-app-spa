@@ -1,15 +1,15 @@
-
 "use strict";
 
-$(document).ready(function(){
+$(document).ready(function () {
     createAddEventListener();
     createAddModalSubmitButtonEventListener();
     getAllMovieData();
+    $("#search-input").toggleClass("hidden");
     $("#add-movie-btn").removeClass("disabled");
 });
 
 function createAddEventListener() {
-    $("#add-movie-btn").click(function(event) {
+    $("#add-movie-btn").click(function (event) {
         event.preventDefault();
         clearAddMovieInputs();
         $("#add-modal").modal("show");
@@ -20,7 +20,7 @@ function createAddModalSubmitButtonEventListener() {
     $("#add-movie-form-btn").click(addMovie);
 }
 
-function addMovie(event){
+function addMovie(event) {
     event.preventDefault();
     const movieObj = {
         title: $('#movie-title-input').val(),
@@ -40,11 +40,11 @@ function addMovie(event){
     };
 
     fetch(url, options)
-        .then(function(response) {
+        .then(function (response) {
             getAllMovieData();
             checkSearch();
             $("#add-modal").modal("hide");
-        }).catch(function(error) {
+        }).catch(function (error) {
         alert("post failed")
     });
     // checkSearch();
@@ -81,7 +81,7 @@ const createMovieCards = (data) => {
                 </div>
             </div>`
     }
-        appendMovieCards(html);
+    appendMovieCards(html);
 }
 
 function createStars(rating) {
@@ -124,7 +124,7 @@ const setMovieData = (data) => {
 
 function createEditModalConfirmButtonEventListener(data) {
     let passingData = data;
-    $("#confirm-edit-btn").click(function() {
+    $("#confirm-edit-btn").click(function () {
         if (count === 0) {
             editMovieData(passingData);
         }
@@ -151,10 +151,10 @@ function editMovieData(data) {
     };
     fetch(url, options)
         .then(function () {
-        getAllMovieData();
-        checkSearch();
-        $("#edit-modal").modal("hide");
-    });
+            getAllMovieData();
+            checkSearch();
+            $("#edit-modal").modal("hide");
+        });
 }
 
 function createDeleteEventListener() {
@@ -178,9 +178,9 @@ async function deleteMovie(id) {
 
 function getMoviesArray() {
     return $.get("https://cord-flannel-print.glitch.me/movies")
-        .done(function(data) {
+        .done(function (data) {
             return data;
-    });
+        });
 }
 
 $("#sort-by-select").change(checkSortByValue);
@@ -188,8 +188,7 @@ $("#sort-by-select").change(checkSortByValue);
 function checkSortByValue() {
     if ($("#sort-by-select").val() === "Default") {
         getAllMovieData();
-    }
-    else if ($("#sort-by-select").val() === "Title (A-Z)") {
+    } else if ($("#sort-by-select").val() === "Title (A-Z)") {
         sortByTitleAToZ();
     } else if ($("#sort-by-select").val() === "Title (Z-A)") {
         sortByTitlZToA();
@@ -227,24 +226,97 @@ async function sortByRatingLowToHigh() {
 }
 
 $("#search-input").keydown(sortBySearch);
-
+$("#rating-select").change(sortBySearch);
+$("#genre-select").change(sortBySearch);
+$("#search-by-select").change(function() {
+    toggleHiddenClassForRatingSelect();
+    makeSearchesDefault();
+    getAllMovieData();
+});
 
 async function sortBySearch() {
-    if ($("#search-input").val() === "") {
+    if ($("#search-input").val() === "" && $("#rating-select").val() === "Default" && $("#genre-select").val() === "Default") {
         getAllMovieData();
+    } else {
+        let moviesArray = await getMoviesArray();
+
+        if ($("#search-by-select").val() === "Title") {
+            createMovieCards(sortByTitle(moviesArray));
+        } else if ($("#search-by-select").val() === "Director") {
+            createMovieCards(sortByDirector(moviesArray));
+        } else if ($("#search-by-select").val() === "Rating") {
+            createMovieCards(sortByRating(moviesArray));
+        } else if ($("#search-by-select").val() === "Genre") {
+            createMovieCards(sortByGenre(moviesArray));
+        } else if ($("#search-by-select").val() === "Release") {
+            createMovieCards(sortByRelease(moviesArray));
+        }
     }
-    let moviesArray = await getMoviesArray();
-    console.log(moviesArray);
-    const newMoviesArray = moviesArray.filter(movie => {
-            if ( movie.title.toLowerCase().indexOf( $("#search-input").val().toLowerCase() ) > -1 ) {
-                return movie;
-            }
-    });
-    createMovieCards(newMoviesArray);
 }
 
 function checkSearch() {
-    if ($("#search-input").val() !== "") {
+    if ($("#search-input").val() !== "" || $("#rating-select").val() !== "Default" !== $("#genre-select") !== "Default") {
         sortBySearch();
     }
+}
+
+function makeSearchesDefault() {
+    $("#search-input").val("");
+    $("#rating-select").val("Default");
+}
+
+function toggleHiddenClassForRatingSelect() {
+    if ($("#search-by-select").val() === "Rating") {
+        $("#search-input").addClass("hidden");
+        $("#rating-select").removeClass("hidden");
+        $("#genre-select").addClass("hidden");
+    } else if ($("#search-by-select").val() === "Genre") {
+        $("#search-input").addClass("hidden");
+        $("#rating-select").addClass("hidden");
+        $("#genre-select").removeClass("hidden");
+    } else {
+        $("#search-input").removeClass("hidden");
+        $("#rating-select").addClass("hidden");
+        $("#genre-select").addClass("hidden");
+    }
+}
+
+function sortByTitle(moviesArray) {
+    return moviesArray.filter(movie => {
+        if (movie.title.toLowerCase().indexOf($("#search-input").val().toLowerCase()) > -1) {
+            return movie;
+        }
+    });
+}
+
+function sortByDirector(moviesArray) {
+    return moviesArray.filter(movie => {
+        if (movie.director.toLowerCase().indexOf($("#search-input").val().toLowerCase()) > -1) {
+            return movie;
+        }
+    });
+}
+
+function sortByRating(moviesArray) {
+    return moviesArray.filter(movie => {
+        if (movie.rating === $("#rating-select").val()) {
+            return movie;
+        }
+    });
+}
+
+function sortByGenre(moviesArray) {
+    return moviesArray.filter(movie => {
+        if (movie.genre === $("#genre-select").val()) {
+            return movie;
+        }
+    });
+}
+
+function sortByRelease(moviesArray) {
+    return moviesArray.filter(movie => {
+        if (movie.release.indexOf($("#search-input").val()) > -1) {
+            return movie;
+        }
+    });
 }
