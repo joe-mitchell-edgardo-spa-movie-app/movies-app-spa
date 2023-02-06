@@ -1,0 +1,18 @@
+body {
+    background-image: url("movie_popcorn.webp");
+    background-position: center;
+    opacity: 68%;
+}
+
+.navbar-brand {
+    font-family: movietimes, fantasy;
+    opacity: 300%;
+
+}
+
+.Chalkduster {
+    font-family: Chalkduster, fantasy;
+}
+.showtime {
+    font-family: showtime, serif;
+}
